@@ -30,6 +30,7 @@ void nmf_learn(double **data, int n_rows, int n_cols, int n_class, double **W, d
         X_hat[i] = (double *)calloc(n_cols,sizeof(double));
     }
 
+    double start_time_for_init = get_time();
     // initialize W, H
     init_genrand(2468);
     // W(n_rows, n_class)
@@ -46,7 +47,11 @@ void nmf_learn(double **data, int n_rows, int n_cols, int n_class, double **W, d
             flops++;
         }
     }
+    double end_time_for_init = get_time();
+    printf("init time: %f\n", end_time_for_init - start_time_for_init);
 
+    // Add timing around X_hat calculation
+    double start_time_for_X_hat = get_time();
     // X_hat = W x H
     int k;
     for(i = 0;i < n_rows;i++){
@@ -58,6 +63,8 @@ void nmf_learn(double **data, int n_rows, int n_cols, int n_class, double **W, d
             }
         }
     }
+    double end_time_for_X_hat = get_time();
+    printf("X_hat time: %f\n", end_time_for_X_hat - start_time_for_X_hat);
 
 
     FILE *ofp;
@@ -76,7 +83,13 @@ void nmf_learn(double **data, int n_rows, int n_cols, int n_class, double **W, d
     double prev_isd;
     double converge_threshold = 1.0e-12;
     double epsilon = 1.0e-12;
+    double time_for_ISD_accum = 0.0;
+    double time_for_W_accum = 0.0;
+    double time_for_H_accum = 0.0;
+    double time_for_X_hat_accum = 0.0;    
     for(it = 0;it < maxiter;it++){
+        // add timing around IS divergence calculation for each iteration and accumulate total time at the end of iterations
+        double start_time_for_ISD = get_time();        
         // compute IS divergence
         isd = 0.0;
         for(i = 0;i < n_rows;i++){
@@ -105,6 +118,7 @@ void nmf_learn(double **data, int n_rows, int n_cols, int n_class, double **W, d
 
         // update rules for minimizing IS divergence
         // update W
+        double start_time_for_W = get_time();        
         for(i = 0;i < n_rows;i++){
             for(k = 0;k < n_class;k++){
                 if(W[i][k] != 0.0){
@@ -126,7 +140,11 @@ void nmf_learn(double **data, int n_rows, int n_cols, int n_class, double **W, d
                 }
             }
         }
+        double end_time_for_W = get_time();
+        time_for_W_accum += end_time_for_W - start_time_for_W;
+
         // update X_hat
+        double start_time_for_X_hat = get_time();        
         for(i = 0;i < n_rows;i++){
             for(j = 0;j < n_cols;j++){
                 X_hat[i][j] = 0.0;
@@ -136,7 +154,11 @@ void nmf_learn(double **data, int n_rows, int n_cols, int n_class, double **W, d
                 }
             }
         }
+        double end_time_for_X_hat = get_time();
+        time_for_X_hat_accum += end_time_for_X_hat - start_time_for_X_hat;
+
         // update H
+        double start_time_for_H = get_time();        
         for(k = 0;k < n_class;k++){
             for(j = 0;j < n_cols;j++){
                 if(H[k][j] != 0.0){
@@ -158,7 +180,11 @@ void nmf_learn(double **data, int n_rows, int n_cols, int n_class, double **W, d
                 }
             }
         }
+        double end_time_for_H = get_time();
+        time_for_H_accum += end_time_for_H - start_time_for_H;
+
         // update X_hat
+        double start_time_for_X_hat_2 = get_time();        
         for(i = 0;i < n_rows;i++){
             for(j = 0;j < n_cols;j++){
                 X_hat[i][j] = 0.0;
@@ -168,7 +194,19 @@ void nmf_learn(double **data, int n_rows, int n_cols, int n_class, double **W, d
                 }
             }
         }
+        double end_time_for_X_hat_2 = get_time();
+        time_for_X_hat_accum += end_time_for_X_hat_2 - start_time_for_X_hat_2;
+
+        double end_time_for_ISD = get_time();
+        double time_for_ISD = end_time_for_ISD - start_time_for_ISD;
+        // accumulate time for IS divergence calculation
+        time_for_ISD_accum += time_for_ISD;
     }
+    // print the accumulated time for IS divergence calculation
+    printf("Time for IS divergence calculation = %f\n",time_for_ISD_accum);
+    printf("Time for W calculation = %f\n",time_for_W_accum);
+    printf("Time for X_hat calculation = %f\n",time_for_X_hat_accum);
+    printf("Time for H calculation = %f\n",time_for_H_accum);
     fclose(ofp);
 
     // get a stop time for gflop calculation
