@@ -1,23 +1,32 @@
 import numpy as np
 import pandas as pd
 import sys
+import time
 
 def nmf(V, n_components, max_iter=200, tol=1e-4):
     n_rows, n_cols = V.shape
     W = np.random.rand(n_rows, n_components)
     H = np.random.rand(n_components, n_cols)
+    flops = 0
+    gflop_start_time = time.time()
 
     for iteration in range(max_iter):
         W_H = np.dot(W, H)
+        flops += n_rows * n_components * n_cols * 2
         V_div_W_H = V / (W_H + 1e-10)  # Add small constant to avoid division by zero
+        flops += n_rows * n_cols
 
         # Update H
         H *= np.dot(W.T, V_div_W_H) / np.dot(W.T, np.ones_like(V))
+        flops += (n_rows * n_components * n_cols * 2) + (n_components * n_cols)
 
         # Update W
         W_H = np.dot(W, H)
+        flops += n_rows * n_components * n_cols * 2
         V_div_W_H = V / (W_H + 1e-10)  # Add small constant to avoid division by zero
+        flops += n_rows * n_cols
         W *= np.dot(V_div_W_H, H.T) / np.dot(np.ones_like(V), H.T)
+        flops += (n_rows * n_cols * n_components * 2) + (n_rows * n_components)
 
         # Calculate Frobenius norm of the residual
         residual = np.linalg.norm(V - np.dot(W, H), 'fro')
@@ -30,6 +39,11 @@ def nmf(V, n_components, max_iter=200, tol=1e-4):
         if (iteration + 1) % 500 == 0:
             divergence = np.sum(V * np.log(V / (W_H + 1e-10)) - V + W_H)
             print(f"Iteration {iteration + 1}: I-divergence = {divergence}")
+
+    gflop_end_time = time.time()
+    gflop_time = gflop_end_time - gflop_start_time
+    gflops = flops / (gflop_time * 1e9)
+    print(f"GFLOPS: {gflops}")
 
     return W, H
 
