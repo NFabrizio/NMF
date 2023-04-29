@@ -18,8 +18,8 @@ nmf: learn.c $(OBJS)
 nmfOpt: learnOpt.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $< $(OBJS) $(LDFLAGS)
 nmfPar: learnPar.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $< $(OBJS) $(LDFLAGS) 
-		
+	$(CC) $(CPARFLAGS) -o $@ $< $(OBJS) $(LDFLAGS) 
+
 .c.o:
 	$(CC) $(CFLAGS) -c $<
 
