@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <omp.h>
 #include <sys/time.h>
 #include "MT.h"
 #include "learn.h"
@@ -34,6 +35,7 @@ void nmf_learn(double **data, int n_rows, int n_cols, int n_class, double **W, d
     // initialize W, H
     init_genrand(2468);
     // W(n_rows, n_class)
+#pragma omp parallel for private (j)
     for(i = 0;i < n_rows;i++){
         for(j = 0;j < n_class;j++){
             W[i][j] = genrand_real3();
@@ -41,6 +43,7 @@ void nmf_learn(double **data, int n_rows, int n_cols, int n_class, double **W, d
         }
     }
     // H(n_class, n_cols)
+#pragma omp parallel for private (j)
     for(i = 0;i < n_class;i++){
         for(j = 0;j < n_cols;j++){
             H[i][j] = genrand_real3();
@@ -54,6 +57,7 @@ void nmf_learn(double **data, int n_rows, int n_cols, int n_class, double **W, d
     double start_time_for_X_hat = get_time();
     // X_hat = W x H
     int k;
+#pragma omp parallel for private (j, k)
     for(i = 0;i < n_rows;i++){
         for(j = 0;j < n_cols;j++){
             X_hat[i][j] = 0.0;
@@ -86,12 +90,13 @@ void nmf_learn(double **data, int n_rows, int n_cols, int n_class, double **W, d
     double time_for_ISD_accum = 0.0;
     double time_for_W_accum = 0.0;
     double time_for_H_accum = 0.0;
-    double time_for_X_hat_accum = 0.0;    
+    double time_for_X_hat_accum = 0.0;
     for(it = 0;it < maxiter;it++){
         // add timing around IS divergence calculation for each iteration and accumulate total time at the end of iterations
-        double start_time_for_ISD = get_time();        
+        double start_time_for_ISD = get_time();
         // compute IS divergence
         isd = 0.0;
+#pragma omp parallel for private (j) reduction(+:isd)
         for(i = 0;i < n_rows;i++){
             for(j = 0;j < n_cols;j++){
                 isd += ((data[i][j]+epsilon) / (X_hat[i][j]+epsilon)) - log((data[i][j]+epsilon) / (X_hat[i][j]+epsilon)) - 1.0;
@@ -118,7 +123,8 @@ void nmf_learn(double **data, int n_rows, int n_cols, int n_class, double **W, d
 
         // update rules for minimizing IS divergence
         // update W
-        double start_time_for_W = get_time();        
+        double start_time_for_W = get_time();
+#pragma omp parallel for private (j, k, numerator, denominator)
         for(i = 0;i < n_rows;i++){
             for(k = 0;k < n_class;k++){
                 if(W[i][k] != 0.0){
@@ -144,7 +150,8 @@ void nmf_learn(double **data, int n_rows, int n_cols, int n_class, double **W, d
         time_for_W_accum += end_time_for_W - start_time_for_W;
 
         // update X_hat
-        double start_time_for_X_hat = get_time();        
+        double start_time_for_X_hat = get_time();
+#pragma omp parallel for private (j, k)
         for(i = 0;i < n_rows;i++){
             for(j = 0;j < n_cols;j++){
                 X_hat[i][j] = 0.0;
@@ -158,8 +165,9 @@ void nmf_learn(double **data, int n_rows, int n_cols, int n_class, double **W, d
         time_for_X_hat_accum += end_time_for_X_hat - start_time_for_X_hat;
 
         // update H
-        double start_time_for_H = get_time();        
+        double start_time_for_H = get_time();
         for(k = 0;k < n_class;k++){
+#pragma omp parallel for private (i, numerator, denominator)
             for(j = 0;j < n_cols;j++){
                 if(H[k][j] != 0.0){
                     numerator = 0.0;
@@ -184,7 +192,8 @@ void nmf_learn(double **data, int n_rows, int n_cols, int n_class, double **W, d
         time_for_H_accum += end_time_for_H - start_time_for_H;
 
         // update X_hat
-        double start_time_for_X_hat_2 = get_time();        
+        double start_time_for_X_hat_2 = get_time();
+#pragma omp parallel for private (j, k)
         for(i = 0;i < n_rows;i++){
             for(j = 0;j < n_cols;j++){
                 X_hat[i][j] = 0.0;
