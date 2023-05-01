@@ -19,7 +19,7 @@ nmfOpt: learnOpt.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $< $(OBJS) $(LDFLAGS)
 nmfPar: learnPar.c $(OBJS)
 	$(CC) $(CPARFLAGS) -o $@ $< $(OBJS) $(LDFLAGS)
-nmfOptPar: learnPar.c $(OBJS)
+nmfOptPar: learnOptPar.c $(OBJS)
 	$(CC) $(CPARFLAGS) -o $@ $< $(OBJS) $(LDFLAGS)
 
 .c.o:
