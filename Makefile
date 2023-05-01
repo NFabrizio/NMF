@@ -1,6 +1,6 @@
 PROGRAM	= nmf nmfOpt nmfPar nmfOptPar
-CC	= gcc
-CFLAGS	= -O3
+CC	= gcc -g
+CFLAGS	= -O3 -g
 CPARFLAGS = -O3 -fopenmp
 SRCS	= timer.c nmf.c feature.c testMatricies.c
 OBJS	= $(SRCS:.c=.o)
