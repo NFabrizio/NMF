@@ -1,5 +1,5 @@
 /*
- * learn.c
+ * learnOpt.c - original file copied from learn.c
  */
 #include <stdio.h>
 #include <stdlib.h>

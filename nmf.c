@@ -21,6 +21,7 @@ int main(int argc, char **argv){
     int i,j;
     double time;
 
+    // Parse all of the command line arguments. 
     while((c = getopt(argc, argv, "N:I:T:B:h")) != -1){
         switch(c){
             case 'N': nclass = atoi(optarg); break;
@@ -38,6 +39,7 @@ int main(int argc, char **argv){
     // open data
     data = feature_matrix(argv[optind]);
 
+    // generated data files have a specific number of classes designed into them. 3 for small, 6 for medium, and 10 for large.
     fprintf(stdout,"Number of words      %d\n",data.n_rows);
     fprintf(stdout,"Number of samples    %d\n",data.n_cols);
     fprintf(stdout,"Number of classes    %d\n",nclass);
@@ -58,6 +60,7 @@ int main(int argc, char **argv){
         H[i] = (double *)calloc(data.n_cols,sizeof(double));
     }
 
+    // This is what does the heavy lifting. Makefile will call learn.c, learnOpt.c, learnPar.c or learnParOpt.c depending on the executable used.
     nmf_learn(data.matrix, data.n_rows, data.n_cols, nclass, W, H, maxiter, blk_size);
 
    /* stop timer */
@@ -66,7 +69,7 @@ int main(int argc, char **argv){
 
    printf("elapsed time = %lf (sec)\n", time);
 
-    // output results
+    // output results - these are simply used to help with verification. Nothing is done with them.
     FILE *wfp, *hfp;
     if((wfp = fopen("W.dat","w")) == NULL){
         fprintf(stderr,"nmf_main:: cannot open output file.\n");
@@ -107,6 +110,7 @@ int main(int argc, char **argv){
     fclose(wfp);
     fclose(hfp);
 
+    // This ensures the new W and H matrices are within a certain threshold of the old ones. This is used to verify the correctness of the program.
     compareMatricies(argv[optind], "W.dat", "H.dat", threshold);
     exit(0);
 }

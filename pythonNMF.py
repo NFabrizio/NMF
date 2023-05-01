@@ -1,32 +1,34 @@
+# Description: A python implementation of the NMF algorithm
+
 import numpy as np
 import pandas as pd
 import sys
 import time
 
-def nmf(V, n_components, max_iter=200, tol=1e-4):
+def nmf(V, n_classes, max_iter, tol=1e-4):
     n_rows, n_cols = V.shape
-    W = np.random.rand(n_rows, n_components)
-    H = np.random.rand(n_components, n_cols)
+    W = np.random.rand(n_rows, n_classes)
+    H = np.random.rand(n_classes, n_cols)
     flops = 0
     gflop_start_time = time.time()
 
-    for iteration in range(max_iter):
+    for iteration in range(max_iter): # Iterate until max iterations is reached - same as C version
         W_H = np.dot(W, H)
-        flops += n_rows * n_components * n_cols * 2
+        flops += n_rows * n_classes * n_cols * 2
         V_div_W_H = V / (W_H + 1e-10)  # Add small constant to avoid division by zero
         flops += n_rows * n_cols
 
         # Update H
         H *= np.dot(W.T, V_div_W_H) / np.dot(W.T, np.ones_like(V))
-        flops += (n_rows * n_components * n_cols * 2) + (n_components * n_cols)
+        flops += (n_rows * n_classes * n_cols * 2) + (n_classes * n_cols)
 
         # Update W
         W_H = np.dot(W, H)
-        flops += n_rows * n_components * n_cols * 2
+        flops += n_rows * n_classes * n_cols * 2
         V_div_W_H = V / (W_H + 1e-10)  # Add small constant to avoid division by zero
         flops += n_rows * n_cols
         W *= np.dot(V_div_W_H, H.T) / np.dot(np.ones_like(V), H.T)
-        flops += (n_rows * n_cols * n_components * 2) + (n_rows * n_components)
+        flops += (n_rows * n_cols * n_classes * 2) + (n_rows * n_classes)
 
         # Calculate Frobenius norm of the residual
         residual = np.linalg.norm(V - np.dot(W, H), 'fro')
@@ -35,7 +37,7 @@ def nmf(V, n_components, max_iter=200, tol=1e-4):
         if residual < tol:
             break
 
-        # Calculate and print I-divergence every 500th iteration
+        # Calculate and print I-divergence every 500th iteration - this is to keep things more consistent with the C version
         if (iteration + 1) % 500 == 0:
             divergence = np.sum(V * np.log(V / (W_H + 1e-10)) - V + W_H)
             print(f"Iteration {iteration + 1}: I-divergence = {divergence}")
