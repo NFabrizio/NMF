@@ -1,7 +1,7 @@
 PROGRAM	= nmf nmfOpt nmfPar nmfOptPar
-CC	= gcc -g
+CC	= gcc
 CFLAGS	= -O3 -g
-CPARFLAGS = -O3 -fopenmp
+CPARFLAGS = -O3 -g -fopenmp
 SRCS	= timer.c nmf.c feature.c testMatricies.c
 OBJS	= $(SRCS:.c=.o)
 HEADERS	= $(SRCS:.c=.h)
