@@ -1,4 +1,4 @@
-PROGRAM	= nmf nmfOpt nmfPar nmfOptPar
+PROGRAM	= nmf nmfOpt nmfPar nmfOptPar nmfVec
 CC	= gcc
 CFLAGS	= -O3 -g
 CPARFLAGS = -O3 -g -fopenmp
@@ -20,6 +20,8 @@ nmfOpt: learnOpt.c $(OBJS)
 nmfPar: learnPar.c $(OBJS)
 	$(CC) $(CPARFLAGS) -o $@ $< $(OBJS) $(LDFLAGS)
 nmfOptPar: learnOptPar.c $(OBJS)
+	$(CC) $(CPARFLAGS) -o $@ $< $(OBJS) $(LDFLAGS)
+nmfVec: learnVec.c $(OBJS)
 	$(CC) $(CPARFLAGS) -o $@ $< $(OBJS) $(LDFLAGS)
 
 .c.o:
