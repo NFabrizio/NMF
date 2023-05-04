@@ -2,8 +2,8 @@ PROGRAM	= nmf nmfOpt nmfPar nmfOptPar nmfVec
 CC	= gcc
 CFLAGS	= -O3 -g
 CPARFLAGS = -O3 -g -fopenmp
-SRCS	= timer.c nmf.c feature.c testMatricies.c 
-ALG_SRCS = learn.c learnOpt.c learnPar.c learnOptPar.c learnVec.c
+SRCS	= timer.c nmf.c feature.c testMatricies.c
+ALG_SRCS = MT.h learn.h learn.c learnOpt.c learnPar.c learnOptPar.c learnVec.c
 OBJS	= $(SRCS:.c=.o)
 HEADERS	= $(SRCS:.c=.h)
 LDFLAGS	= -lm
@@ -34,6 +34,6 @@ clean:
 	@rm -f .depend $(OBJS)
 
 tar: $(SRCS) $(ALG_SRCS) $(HEADERS) $(wildcard $(addsuffix *, $(DIRS))) $(DISTFILES)
-	tar -czvf RIVERA_FABRIZIO_FINAL_PROJECT.tar.gz $^
+	tar -czvf finalProject.tar $^
 
 -include .depend

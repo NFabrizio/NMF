@@ -24,7 +24,7 @@ Below are the instructions for installing this application.
    This will create two files, one for W and one H named W.dat and H.dat respectively.  
 
 2. To run test.sh script, run the following command.  
-   `./test.sh 4 500 ./test_data/iris_test_data.data 0 50 nmf`  
+   `./test.sh 4 500 ./test_data/iris_test_data.data 1 0 50 nmf`  
    First Param is N, second is Iterations, third is data file name, fourth is threshold, fith is 0=no threading, 1=threading, 6th block size and last is algorithm
    This will generate or add to a test_output.txt file with results for 7 runs of each of 1-8 threads (if threading is activated)
    Default values are 2, 50, iris_test_data.data and 0 if none are passed in. We have also created a test_all script that will loop through all algorithms and
@@ -111,3 +111,7 @@ Below are the instructions for installing this application.
 
 4. Other scripts include generateData.sh which was run once for each of the data sizes. We re-used the same datasets for each algorithm, so you only need to execute this if you'd like to generate a dataset of a different size. First param is number of rows, second is number of features, and 3rd is the file name the dataset will be written to once generated. `./generateData.sh 10000 50 xtra_large_data.dat`
 
+5. To execute the python version of NMF for each dataset. This was used to help measure our speedup vs an already tuned library.
+   `python3 pythonNMF.py test_data/small_data.dat 10000 1 3`
+   `python3 pythonNMF.py test_data/med_data.dat 10000 5 6`
+   `python3 pythonNMF.py test_data/large_data.dat 10000 15 10`
