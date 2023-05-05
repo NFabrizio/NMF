@@ -88,9 +88,10 @@ Below are the instructions for installing this application.
    WH and originalData are the same  
    ```
 
-4. Other scripts include generateData.sh which was run once for each of the data sizes. We re-used the same datasets for each algorithm, so you only need to execute this if you'd like to generate a dataset of a different size. First param is number of rows, second is number of features, and 3rd is the file name the dataset will be written to once generated. `./generateData.sh 10000 50 xtra_large_data.dat`
+4. Other scripts include generateData.sh which was run once for each of the data sizes. We re-used the same datasets for each algorithm, so you only need to execute this if you'd like to generate a dataset of a different size. First param is number of rows, second is number of features, and 3rd is the file name the dataset will be written to once generated.  
+`./generateData.sh 10000 50 xtra_large_data.dat`  
 
 5. To execute the python version of NMF for each dataset. This was used to help measure our speedup vs an already tuned library.
-   `python3 pythonNMF.py test_data/small_data.dat 10000 1 3`
-   `python3 pythonNMF.py test_data/med_data.dat 10000 5 6`
-   `python3 pythonNMF.py test_data/large_data.dat 10000 15 10`
+   `python3 pythonNMF.py test_data/small_data.dat 10000 1 3`  
+   `python3 pythonNMF.py test_data/med_data.dat 10000 5 6`  
+   `python3 pythonNMF.py test_data/large_data.dat 10000 15 10`  
