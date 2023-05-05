@@ -3,13 +3,14 @@ CC	= gcc
 CFLAGS	= -O3 -g
 CPARFLAGS = -O3 -g -fopenmp
 SRCS	= timer.c nmf.c feature.c testMatricies.c
+ALG_SRCS = MT.h learn.h learn.c learnOpt.c learnPar.c learnOptPar.c learnVec.c
 OBJS	= $(SRCS:.c=.o)
 HEADERS	= $(SRCS:.c=.h)
 LDFLAGS	= -lm
 VERSION	= 0.1
 PKGNAME	= nmf-$(VERSION)
-DISTDIR	= ../dist
-DISTFILES	= $(SRCS) $(HEADERS) Makefile
+DIRS	= include/ test_data/
+DISTFILES = README.md generateData.sh testPython.sh testAll.sh test.sh pythonNMF.py report.pdf Makefile
 
 all: depend $(PROGRAM)
 
@@ -31,10 +32,8 @@ depend:
 	@$(CC) -MM $(SRCS) > .depend
 clean:
 	@rm -f .depend $(OBJS)
-pkg:
-	@[ -d $(PKGNAME) ] || mkdir $(PKGNAME)
-	@cp -p $(DISTFILES) $(PKGNAME)
-	@tar czvf $(DISTDIR)/$(PKGNAME).tar.gz $(PKGNAME)
-	@rm -r $(PKGNAME)
+
+tar: $(SRCS) $(ALG_SRCS) $(HEADERS) $(wildcard $(addsuffix *, $(DIRS))) $(DISTFILES)
+	tar -czvf finalProject.tar $^
 
 -include .depend
