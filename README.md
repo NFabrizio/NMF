@@ -1,4 +1,5 @@
 # NMF  
+_Authors_: [Karen Rivera](https://github.com/karenrivera-tranetech), [Nick Fabrizio](https://github.com/NFabrizio)  
 
 This is a C implementation of Nonnegative Matrix Factorization using Itakura-Saito (IS) divergence criterion.
 Multiplicative update rules are used for minimizing IS divergence.  
@@ -22,6 +23,10 @@ Below are the instructions for installing this application.
 1. To run the application using the test data, run the following command.  
    `./nmf -N 4 -I 500 -B 50 -T 1 ./test_data/iris_test_data.data`  
    This will create two files, one for W and one H named W.dat and H.dat respectively.  
+   N = number of classes  
+   I = number of iterations  
+   B = block size  
+   T = threshold  
 
 2. To run test.sh script, run the following command.  
    `./test.sh 4 500 ./test_data/iris_test_data.data 1 0 50 nmf`  
@@ -33,53 +38,27 @@ Below are the instructions for installing this application.
 3. 3 data files have been generated and stored in test_data folder. Below are the command lines to run each test and the expected output with the seed   
    LARGE DATA FILE RUN  
    `./nmf -N 10 -I 10000 -T 15 -B 250 ./test_data/large_data.dat`  
-   ```
-   Number of words      10000  
-   Number of samples    10  
-   Number of classes    10  
-
-   IS Divergence = 6267531.91859795  
-
-   IS Divergence = 59.33167726  
-
-   IS Divergence = 40.80568387...  
-
-   IS Divergence = 1.68638146  
-
-   IS Divergence = 1.56581928  
-   elapsed time = 75.944988 (sec)  
-   WH and originalData are the same
-   ```  
+   `./nmfOpt -N 10 -I 10000 -T 15 -B 250 ./test_data/large_data.dat`  
+   `./nmfPar -N 10 -I 10000 -T 15 -B 250 ./test_data/large_data.dat`  
+   `./nmfOptPar -N 10 -I 10000 -T 15 -B 250 ./test_data/large_data.dat`  
+   `./nmfVec -N 10 -I 10000 -T 15 -B 250 ./test_data/large_data.dat`  
 
    MED DATA FILE RUN  
    `./nmf -N 6 -I 10000 -T 5 -B 500 ./test_data/med_data.dat`  
-   ```
-   Number of words      5000  
-   Number of samples    6  
-   Number of classes    6  
-
-   IS Divergence = 1805581.09459682  
-
-   IS Divergence = 15.76550055  
-
-   IS Divergence = 13.15114621  
-
-   IS Divergence = 10.04007297  
-
-   IS Divergence = 5.13743033...  
-
-   IS Divergence = 0.21918876  
-
-   IS Divergence = 0.19042569  
-
-   IS Divergence = 0.16445100  
-   elapsed time = 13.260365 (sec)  
-   WH and originalData are the same  
-   ```
+   `./nmfOpt -N 6 -I 10000 -T 5 -B 500 ./test_data/med_data.dat`  
+   `./nmfPar -N 6 -I 10000 -T 5 -B 500 ./test_data/med_data.dat`  
+   `./nmfOptPar -N 6 -I 10000 -T 5 -B 500 ./test_data/med_data.dat`  
+   `./nmfVec -N 6 -I 10000 -T 5 -B 500 ./test_data/med_data.dat`  
 
 
    SMALL DATA FILE RUN  
    `./nmf -N 3 -I 10000 -T 1 -B 50 ./test_data/small_data.dat`  
+   `./nmfOpt -N 3 -I 10000 -T 1 -B 50 ./test_data/small_data.dat`  
+   `./nmfPar -N 3 -I 10000 -T 1 -B 50 ./test_data/small_data.dat`  
+   `./nmfOptPar -N 3 -I 10000 -T 1 -B 50 ./test_data/small_data.dat`  
+   `./nmfVec -N 3 -I 10000 -T 1 -B 50 ./test_data/small_data.dat`  
+
+   Sample output:  
    ```
    Number of words      1000  
    Number of samples    3  
